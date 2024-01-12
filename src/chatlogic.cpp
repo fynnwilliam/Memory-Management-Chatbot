@@ -19,7 +19,6 @@ ChatLogic::~ChatLogic() = default;
 template <typename T>
 void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist &tokens,
                                       T &element) {
-  // find all occurences for current node
   auto token = tokens.begin();
   while (true) {
     token = std::find_if(token, tokens.end(), [&tokenID](const auto &pair) {
@@ -27,86 +26,68 @@ void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist &tokens,
       ;
     });
     if (token != tokens.end()) {
-      element.AddToken(token->second);  // add new keyword to edge
-      token++;                          // increment iterator to next element
+      element.AddToken(token->second);
+      token++;                          
     } else {
-      break;  // quit infinite while-loop
+      break;
     }
   }
 }
 
 void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
-  // load file with answer graph elements
   std::ifstream file(filename);
 
-  // check for file availability and process it line by line
   if (file) {
-    // loop over all lines in the file
     std::string lineStr;
     while (getline(file, lineStr)) {
-      // extract all tokens from current line
       tokenlist tokens;
       while (lineStr.size() > 0) {
-        // extract next token
         int posTokenFront = lineStr.find("<");
         int posTokenBack = lineStr.find(">");
         if (posTokenFront < 0 || posTokenBack < 0)
-          break;  // quit loop if no complete token has been found
+          break;
         std::string tokenStr =
             lineStr.substr(posTokenFront + 1, posTokenBack - 1);
 
-        // extract token type and info
         int posTokenInfo = tokenStr.find(":");
         if (posTokenInfo != std::string::npos) {
           std::string tokenType = tokenStr.substr(0, posTokenInfo);
           std::string tokenInfo =
               tokenStr.substr(posTokenInfo + 1, tokenStr.size() - 1);
 
-          // add token to vector
           tokens.emplace_back(std::move(tokenType), std::move(tokenInfo));
         }
 
-        // remove token from current line
         lineStr = lineStr.substr(posTokenBack + 1, lineStr.size());
       }
 
-      // process tokens for current line
       auto type =
           std::find_if(tokens.begin(), tokens.end(),
                        [](const std::pair<std::string, std::string> &pair) {
                          return pair.first == "TYPE";
                        });
       if (type != tokens.end()) {
-        // check for id
         auto idToken =
             std::find_if(tokens.begin(), tokens.end(),
                          [](const std::pair<std::string, std::string> &pair) {
                            return pair.first == "ID";
                          });
         if (idToken != tokens.end()) {
-          // extract id from token
           int id = std::stoi(idToken->second);
 
-          // node-based processing
           if (type->second == "NODE") {
-            // check if node with this ID exists already
             auto newNode = std::find_if(
                 _nodes.begin(), _nodes.end(),
                 [&id](const auto &node) { return node->GetID() == id; });
 
-            // create new element if ID does not yet exist
             if (newNode == _nodes.end()) {
               _nodes.emplace_back(std::make_unique<GraphNode>(id));
-              newNode = _nodes.end() - 1;  // get iterator to last element
-
-              // add all answers to current node
+              newNode = _nodes.end() - 1;
               AddAllTokensToElement("ANSWER", tokens, **newNode);
             }
           }
 
-          // edge-based processing
           if (type->second == "EDGE") {
-            // find tokens for incoming (parent) and outgoing (child) node
             auto parentToken = std::find_if(
                 tokens.begin(), tokens.end(),
                 [](const std::pair<std::string, std::string> &pair) {
@@ -119,7 +100,6 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
                 });
 
             if (parentToken != tokens.end() && childToken != tokens.end()) {
-              // get iterator on incoming and outgoing node via ID search
               const auto &parentNode = *std::find_if(
                   _nodes.begin(), _nodes.end(),
                   [&parentToken](const auto &node) {
@@ -131,16 +111,12 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
                     return node->GetID() == std::stoi(childToken->second);
                   });
 
-              // create new edge
               auto edge = std::make_unique<GraphEdge>(id);
               edge->SetChildNode(childNode.get());
               edge->SetParentNode(parentNode.get());
               _edges.emplace_back(edge.get());
 
-              // find all keywords for current node
               AddAllTokensToElement("KEYWORD", tokens, *edge);
-
-              // store reference in child node and parent node
               childNode->AddEdgeToParentNode(edge.get());
               parentNode->AddEdgeToChildNode(std::move(edge));
             }
@@ -162,10 +138,9 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
   // identify root node
   GraphNode *rootNode = nullptr;
   for (auto &node : _nodes) {
-    // search for nodes which have no incoming edges
     if (node->GetNumberOfParents() == 0) {
       if (rootNode == nullptr) {
-        rootNode = node.get();  // assign current node to root
+        rootNode = node.get();
       } else {
         std::cout << "ERROR : Multiple root nodes detected" << std::endl;
       }
@@ -178,7 +153,6 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
   // GUI
   chatBot.SetChatLogicHandle(this);
 
-  // add chatbot to graph root node
   chatBot.SetRootNode(rootNode);
   rootNode->MoveChatbotHere(std::move(chatBot));
 }

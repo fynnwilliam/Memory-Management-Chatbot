@@ -19,11 +19,8 @@ auto deep_copy(const T* item) {
 
 ChatBot::ChatBot() = default;
 
-// constructor WITH memory allocation
 ChatBot::ChatBot(std::string filename) {
   std::cout << "ChatBot Constructor\n";
-
-  // load image into heap memory
   _image = new wxBitmap(filename, wxBITMAP_TYPE_PNG);
 }
 
@@ -105,12 +102,10 @@ void ChatBot::ReceiveMessageFromUser(std::string message) {
     newNode = _rootNode;
   }
 
-  // tell current node to move chatbot to new node
   _currentNode->MoveChatbotToNewNode(newNode);
 }
 
 void ChatBot::SetCurrentNode(GraphNode* node) {
-  // update pointer to current node
   _currentNode = node;
 
   // select a random node answer (if several answers should exist)
@@ -121,12 +116,10 @@ void ChatBot::SetCurrentNode(GraphNode* node) {
   std::string answer = answers.at(dis(generator));
 
   _chatLogic->SetChatbotHandle(this);
-  // send selected node answer to user
   _chatLogic->SendMessageToUser(answer);
 }
 
 int ChatBot::ComputeLevenshteinDistance(std::string s1, std::string s2) {
-  // convert both strings to upper-case before comparing
   std::transform(s1.begin(), s1.end(), s1.begin(), ::toupper);
   std::transform(s2.begin(), s2.end(), s2.begin(), ::toupper);
 
