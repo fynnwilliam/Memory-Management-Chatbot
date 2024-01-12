@@ -11,31 +11,31 @@ class GraphEdge;
 class GraphNode;
 
 class ChatLogic {
- private:
+private:
   std::vector<std::unique_ptr<GraphNode>> _nodes;
-  std::vector<GraphEdge *> _edges;
+  std::vector<GraphEdge*> _edges;
 
-  GraphNode *_currentNode = nullptr;
-  ChatBot *_chatBot = nullptr;
-  ChatBotPanelDialog *_panelDialog = nullptr;
+  GraphNode* _currentNode = nullptr;
+  ChatBot* _chatBot = nullptr;
+  ChatBotPanelDialog* _panelDialog = nullptr;
 
   typedef std::vector<std::pair<std::string, std::string>> tokenlist;
 
   template <typename T>
-  void AddAllTokensToElement(std::string tokenID, tokenlist &tokens,
-                             T &element);
+  void AddAllTokensToElement(std::string tokenID, tokenlist& tokens,
+                             T& element);
 
- public:
+public:
   ChatLogic();
   ~ChatLogic();
 
-  void SetPanelDialogHandle(ChatBotPanelDialog *panelDialog);
-  void SetChatbotHandle(ChatBot *chatbot);
+  void SetPanelDialogHandle(ChatBotPanelDialog* panelDialog);
+  void SetChatbotHandle(ChatBot* chatbot);
 
   void LoadAnswerGraphFromFile(std::string filename);
   void SendMessageToChatbot(std::string message);
   void SendMessageToUser(std::string message);
-  wxBitmap *GetImageFromChatbot();
+  wxBitmap* GetImageFromChatbot();
 };
 
 #endif // CHATLOGIC_H_

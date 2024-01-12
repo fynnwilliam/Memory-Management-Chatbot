@@ -11,11 +11,10 @@
 #include "graphnode.h"
 
 namespace {
-template <typename T>
-auto deep_copy(const T* item) {
+template <typename T> auto deep_copy(const T *item) {
   return item ? new T{*item} : nullptr;
 }
-}  // namespace
+} // namespace
 
 ChatBot::ChatBot() = default;
 
@@ -26,9 +25,7 @@ ChatBot::ChatBot(std::string filename) {
 
 ChatBot::~ChatBot() {
   std::cout << "ChatBot Destructor\n";
-std::cout << _currentNode << '\n'
-          << _rootNode << '\n'
-          << _chatLogic << '\n';
+  std::cout << _currentNode << '\n' << _rootNode << '\n' << _chatLogic << '\n';
   if (_image != nullptr) {
     delete _image;
     _image = nullptr;
@@ -76,7 +73,7 @@ ChatBot& ChatBot::operator=(ChatBot&& rhs) {
 void ChatBot::ReceiveMessageFromUser(std::string message) {
   // loop over all edges and keywords and compute Levenshtein distance to query
   typedef std::pair<GraphEdge&, int> EdgeDist;
-  std::vector<EdgeDist> levDists;  // format is <ptr,levDist>
+  std::vector<EdgeDist> levDists; // format is <ptr,levDist>
 
   for (size_t index = 0, size = _currentNode->GetNumberOfChildEdges();
        index < size; ++index) {
@@ -88,15 +85,15 @@ void ChatBot::ReceiveMessageFromUser(std::string message) {
   }
 
   // select best fitting edge to proceed along
-  GraphNode* newNode;
+  GraphNode *newNode;
   if (levDists.size() > 0) {
     // sort in ascending order of Levenshtein distance (best fit is at the top)
     std::sort(levDists.begin(), levDists.end(),
               [](const EdgeDist& a, const EdgeDist& b) {
                 return a.second < b.second;
               });
-    newNode = levDists.at(0).first.GetChildNode();  // after sorting the best
-                                                    // edge is at first position
+    newNode = levDists.at(0).first.GetChildNode(); // after sorting the best
+                                                   // edge is at first position
   } else {
     // go back to root node
     newNode = _rootNode;
@@ -105,7 +102,7 @@ void ChatBot::ReceiveMessageFromUser(std::string message) {
   _currentNode->MoveChatbotToNewNode(newNode);
 }
 
-void ChatBot::SetCurrentNode(GraphNode* node) {
+void ChatBot::SetCurrentNode(GraphNode *node) {
   _currentNode = node;
 
   // select a random node answer (if several answers should exist)
@@ -127,12 +124,15 @@ int ChatBot::ComputeLevenshteinDistance(std::string s1, std::string s2) {
   const size_t m(s1.size());
   const size_t n(s2.size());
 
-  if (m == 0) return n;
-  if (n == 0) return m;
+  if (m == 0)
+    return n;
+  if (n == 0)
+    return m;
 
-  size_t* costs = new size_t[n + 1];
+  size_t *costs = new size_t[n + 1];
 
-  for (size_t k = 0; k <= n; k++) costs[k] = k;
+  for (size_t k = 0; k <= n; k++)
+    costs[k] = k;
 
   size_t i = 0;
   for (std::string::const_iterator it1 = s1.begin(); it1 != s1.end();

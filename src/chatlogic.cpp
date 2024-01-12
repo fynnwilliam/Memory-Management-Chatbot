@@ -17,17 +17,17 @@ ChatLogic::ChatLogic() = default;
 ChatLogic::~ChatLogic() = default;
 
 template <typename T>
-void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist &tokens,
-                                      T &element) {
+void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist& tokens,
+                                      T& element) {
   auto token = tokens.begin();
   while (true) {
-    token = std::find_if(token, tokens.end(), [&tokenID](const auto &pair) {
+    token = std::find_if(token, tokens.end(), [&tokenID](const auto& pair) {
       return pair.first == tokenID;
       ;
     });
     if (token != tokens.end()) {
       element.AddToken(token->second);
-      token++;                          
+      token++;
     } else {
       break;
     }
@@ -63,13 +63,13 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
 
       auto type =
           std::find_if(tokens.begin(), tokens.end(),
-                       [](const std::pair<std::string, std::string> &pair) {
+                       [](const std::pair<std::string, std::string>& pair) {
                          return pair.first == "TYPE";
                        });
       if (type != tokens.end()) {
         auto idToken =
             std::find_if(tokens.begin(), tokens.end(),
-                         [](const std::pair<std::string, std::string> &pair) {
+                         [](const std::pair<std::string, std::string>& pair) {
                            return pair.first == "ID";
                          });
         if (idToken != tokens.end()) {
@@ -78,7 +78,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
           if (type->second == "NODE") {
             auto newNode = std::find_if(
                 _nodes.begin(), _nodes.end(),
-                [&id](const auto &node) { return node->GetID() == id; });
+                [&id](const auto& node) { return node->GetID() == id; });
 
             if (newNode == _nodes.end()) {
               _nodes.emplace_back(std::make_unique<GraphNode>(id));
@@ -90,24 +90,24 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
           if (type->second == "EDGE") {
             auto parentToken = std::find_if(
                 tokens.begin(), tokens.end(),
-                [](const std::pair<std::string, std::string> &pair) {
+                [](const std::pair<std::string, std::string>& pair) {
                   return pair.first == "PARENT";
                 });
             auto childToken = std::find_if(
                 tokens.begin(), tokens.end(),
-                [](const std::pair<std::string, std::string> &pair) {
+                [](const std::pair<std::string, std::string>& pair) {
                   return pair.first == "CHILD";
                 });
 
             if (parentToken != tokens.end() && childToken != tokens.end()) {
-              const auto &parentNode = *std::find_if(
+              const auto& parentNode = *std::find_if(
                   _nodes.begin(), _nodes.end(),
-                  [&parentToken](const auto &node) {
+                  [&parentToken](const auto& node) {
                     return node->GetID() == std::stoi(parentToken->second);
                   });
-              const auto &childNode = *std::find_if(
+              const auto& childNode = *std::find_if(
                   _nodes.begin(), _nodes.end(),
-                  [&childToken](const auto &node) {
+                  [&childToken](const auto& node) {
                     return node->GetID() == std::stoi(childToken->second);
                   });
 
@@ -125,11 +125,11 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
           std::cout << "Error: ID missing. Line is ignored!" << std::endl;
         }
       }
-    }  // eof loop over all lines in the file
+    } // eof loop over all lines in the file
 
     file.close();
 
-  }  // eof check for file availability
+  } // eof check for file availability
   else {
     std::cout << "File could not be opened!" << std::endl;
     return;
@@ -137,7 +137,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
 
   // identify root node
   GraphNode *rootNode = nullptr;
-  for (auto &node : _nodes) {
+  for (auto& node : _nodes) {
     if (node->GetNumberOfParents() == 0) {
       if (rootNode == nullptr) {
         rootNode = node.get();

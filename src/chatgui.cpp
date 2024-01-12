@@ -25,7 +25,7 @@ bool ChatBotApp::OnInit() {
   return true;
 }
 
-ChatBotFrame::ChatBotFrame(const wxString &title)
+ChatBotFrame::ChatBotFrame(const wxString& title)
     : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height)) {
   ChatBotFrameImagePanel *ctrlPanel = new ChatBotFrameImagePanel(this);
 
@@ -49,7 +49,7 @@ ChatBotFrame::ChatBotFrame(const wxString &title)
   this->Centre();
 }
 
-void ChatBotFrame::OnEnter(wxCommandEvent &WXUNUSED(event)) {
+void ChatBotFrame::OnEnter(wxCommandEvent& WXUNUSED(event)) {
   wxString userText = _userTextCtrl->GetLineText(0);
 
   _panelDialog->AddDialogItem(userText, true);
@@ -59,13 +59,13 @@ void ChatBotFrame::OnEnter(wxCommandEvent &WXUNUSED(event)) {
 }
 
 BEGIN_EVENT_TABLE(ChatBotFrameImagePanel, wxPanel)
-EVT_PAINT(ChatBotFrameImagePanel::paintEvent)  // catch paint events
+EVT_PAINT(ChatBotFrameImagePanel::paintEvent) // catch paint events
 END_EVENT_TABLE()
 
 ChatBotFrameImagePanel::ChatBotFrameImagePanel(wxFrame *parent)
     : wxPanel(parent) {}
 
-void ChatBotFrameImagePanel::paintEvent(wxPaintEvent &evt) {
+void ChatBotFrameImagePanel::paintEvent(wxPaintEvent& evt) {
   wxPaintDC dc(this);
   render(dc);
 }
@@ -75,7 +75,7 @@ void ChatBotFrameImagePanel::paintNow() {
   render(dc);
 }
 
-void ChatBotFrameImagePanel::render(wxDC &dc) {
+void ChatBotFrameImagePanel::render(wxDC& dc) {
   wxString imgFile = imgBasePath + "sf_bridge.jpg";
   wxImage image;
   image.LoadFile(imgFile);
@@ -90,7 +90,7 @@ void ChatBotFrameImagePanel::render(wxDC &dc) {
 }
 
 BEGIN_EVENT_TABLE(ChatBotPanelDialog, wxPanel)
-EVT_PAINT(ChatBotPanelDialog::paintEvent)  // catch paint events
+EVT_PAINT(ChatBotPanelDialog::paintEvent) // catch paint events
 END_EVENT_TABLE()
 
 ChatBotPanelDialog::ChatBotPanelDialog(wxWindow *parent, wxWindowID id)
@@ -116,7 +116,7 @@ void ChatBotPanelDialog::AddDialogItem(wxString text, bool isFromUser) {
   _dialogSizer->Layout();
 
   // make scrollbar show up
-  this->FitInside();  // ask the sizer about the needed size
+  this->FitInside(); // ask the sizer about the needed size
   this->SetScrollRate(5, 5);
   this->Layout();
 
@@ -132,7 +132,7 @@ void ChatBotPanelDialog::PrintChatbotResponse(std::string response) {
   AddDialogItem(botText, false);
 }
 
-void ChatBotPanelDialog::paintEvent(wxPaintEvent &evt) {
+void ChatBotPanelDialog::paintEvent(wxPaintEvent& evt) {
   wxPaintDC dc(this);
   render(dc);
 }
@@ -142,7 +142,7 @@ void ChatBotPanelDialog::paintNow() {
   render(dc);
 }
 
-void ChatBotPanelDialog::render(wxDC &dc) {
+void ChatBotPanelDialog::render(wxDC& dc) {
   wxImage image;
   image.LoadFile(imgBasePath + "sf_bridge_inner.jpg");
 
