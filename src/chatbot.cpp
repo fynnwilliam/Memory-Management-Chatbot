@@ -11,7 +11,7 @@
 #include "graphnode.h"
 
 namespace {
-template <typename T> auto deep_copy(const T *item) {
+template <typename T> auto deep_copy(const T* item) {
   return item ? new T{*item} : nullptr;
 }
 } // namespace
@@ -85,7 +85,7 @@ void ChatBot::ReceiveMessageFromUser(std::string message) {
   }
 
   // select best fitting edge to proceed along
-  GraphNode *newNode;
+  GraphNode* newNode;
   if (levDists.size() > 0) {
     // sort in ascending order of Levenshtein distance (best fit is at the top)
     std::sort(levDists.begin(), levDists.end(),
@@ -102,7 +102,7 @@ void ChatBot::ReceiveMessageFromUser(std::string message) {
   _currentNode->MoveChatbotToNewNode(newNode);
 }
 
-void ChatBot::SetCurrentNode(GraphNode *node) {
+void ChatBot::SetCurrentNode(GraphNode* node) {
   _currentNode = node;
 
   // select a random node answer (if several answers should exist)
@@ -129,7 +129,7 @@ int ChatBot::ComputeLevenshteinDistance(std::string s1, std::string s2) {
   if (n == 0)
     return m;
 
-  size_t *costs = new size_t[n + 1];
+  size_t* costs = new size_t[n + 1];
 
   for (size_t k = 0; k <= n; k++)
     costs[k] = k;

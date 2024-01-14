@@ -136,7 +136,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
   }
 
   // identify root node
-  GraphNode *rootNode = nullptr;
+  GraphNode* rootNode = nullptr;
   for (auto& node : _nodes) {
     if (node->GetNumberOfParents() == 0) {
       if (rootNode == nullptr) {
@@ -157,11 +157,11 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
   rootNode->MoveChatbotHere(std::move(chatBot));
 }
 
-void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog *panelDialog) {
+void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog* panelDialog) {
   _panelDialog = panelDialog;
 }
 
-void ChatLogic::SetChatbotHandle(ChatBot *chatbot) { _chatBot = chatbot; }
+void ChatLogic::SetChatbotHandle(ChatBot* chatbot) { _chatBot = chatbot; }
 
 void ChatLogic::SendMessageToChatbot(std::string message) {
   _chatBot->ReceiveMessageFromUser(message);
@@ -171,6 +171,6 @@ void ChatLogic::SendMessageToUser(std::string message) {
   _panelDialog->PrintChatbotResponse(message);
 }
 
-wxBitmap *ChatLogic::GetImageFromChatbot() {
+wxBitmap* ChatLogic::GetImageFromChatbot() {
   return _chatBot->GetImageHandle();
 }

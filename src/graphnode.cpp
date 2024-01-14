@@ -12,7 +12,7 @@ void GraphNode::AddToken(std::string token) {
   _answers.emplace_back(std::move(token));
 }
 
-void GraphNode::AddEdgeToParentNode(GraphEdge *edge) {
+void GraphNode::AddEdgeToParentNode(GraphEdge* edge) {
   _parentEdges.emplace_back(edge);
 }
 
@@ -25,7 +25,7 @@ void GraphNode::MoveChatbotHere(ChatBot chatbot) {
   _chatBot.SetCurrentNode(this);
 }
 
-void GraphNode::MoveChatbotToNewNode(GraphNode *newNode) {
+void GraphNode::MoveChatbotToNewNode(GraphNode* newNode) {
   newNode->MoveChatbotHere(std::move(_chatBot));
 }
 
