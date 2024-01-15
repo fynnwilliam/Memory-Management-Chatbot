@@ -16,107 +16,107 @@ template <typename T> auto deep_copy(const T* item) {
 }
 } // namespace
 
-ChatBot::ChatBot() = default;
+chat_bot::chat_bot() = default;
 
-ChatBot::ChatBot(std::string filename) {
-  std::cout << "ChatBot Constructor\n";
+chat_bot::chat_bot(std::string filename) {
+  std::cout << "chat_bot Constructor\n";
   _image = new wxBitmap(filename, wxBITMAP_TYPE_PNG);
 }
 
-ChatBot::~ChatBot() {
-  std::cout << "ChatBot Destructor\n";
-  std::cout << _currentNode << '\n' << _rootNode << '\n' << _chatLogic << '\n';
+chat_bot::~chat_bot() {
+  std::cout << "chat_bot Destructor\n";
+  std::cout << _current_node << '\n' << _root_node << '\n' << _chat_logic << '\n';
   if (_image != nullptr) {
     delete _image;
     _image = nullptr;
   }
 }
 
-ChatBot::ChatBot(const ChatBot& other) {
+chat_bot::chat_bot(const chat_bot& other) {
   std::cout << "copy ctor...\n";
   _image = deep_copy(other._image);
-  _currentNode = other._currentNode;
-  _rootNode = other._rootNode;
-  _chatLogic = other._chatLogic;
+  _current_node = other._current_node;
+  _root_node = other._root_node;
+  _chat_logic = other._chat_logic;
 }
 
-ChatBot::ChatBot(ChatBot&& other) noexcept {
+chat_bot::chat_bot(chat_bot&& other) noexcept {
   std::cout << "move ctor...\n";
   _image = other._image;
-  _currentNode = other._currentNode;
-  _rootNode = other._rootNode;
-  _chatLogic = other._chatLogic;
+  _current_node = other._current_node;
+  _root_node = other._root_node;
+  _chat_logic = other._chat_logic;
 
   other._image = nullptr;
 }
 
-ChatBot& ChatBot::operator=(const ChatBot& rhs) {
+chat_bot& chat_bot::operator=(const chat_bot& rhs) {
   std::cout << "copy assignment operator\n";
   _image = deep_copy(rhs._image);
-  _currentNode = rhs._currentNode;
-  _rootNode = rhs._rootNode;
-  _chatLogic = rhs._chatLogic;
+  _current_node = rhs._current_node;
+  _root_node = rhs._root_node;
+  _chat_logic = rhs._chat_logic;
   return *this;
 }
 
-ChatBot& ChatBot::operator=(ChatBot&& rhs) {
+chat_bot& chat_bot::operator=(chat_bot&& rhs) {
   std::cout << "move assignment operator\n";
   _image = rhs._image;
-  _currentNode = rhs._currentNode;
-  _rootNode = rhs._rootNode;
-  _chatLogic = rhs._chatLogic;
+  _current_node = rhs._current_node;
+  _root_node = rhs._root_node;
+  _chat_logic = rhs._chat_logic;
 
   rhs._image = nullptr;
   return *this;
 }
 
-void ChatBot::ReceiveMessageFromUser(std::string message) {
+void chat_bot::receive_message_from_user(std::string message) {
   // loop over all edges and keywords and compute Levenshtein distance to query
-  typedef std::pair<GraphEdge&, int> EdgeDist;
-  std::vector<EdgeDist> levDists; // format is <ptr,levDist>
+  using edge_dist = std::pair<GraphEdge&, int>;
+  std::vector<edge_dist> lev_dists;
 
-  for (size_t index = 0, size = _currentNode->GetNumberOfChildEdges();
+  for (size_t index = 0, size = _current_node->GetNumberOfChildEdges();
        index < size; ++index) {
-    auto& edge = _currentNode->GetChildEdgeAtIndex(index);
+    auto& edge = _current_node->GetChildEdgeAtIndex(index);
     for (const auto& keyword : edge.GetKeywords()) {
-      levDists.emplace_back(std::ref(edge),
-                            ComputeLevenshteinDistance(keyword, message));
+      lev_dists.emplace_back(std::ref(edge),
+                            levenshtein_distance(keyword, message));
     }
   }
 
   // select best fitting edge to proceed along
-  GraphNode* newNode;
-  if (levDists.size() > 0) {
+  GraphNode* node;
+  if (lev_dists.size() > 0) {
     // sort in ascending order of Levenshtein distance (best fit is at the top)
-    std::sort(levDists.begin(), levDists.end(),
-              [](const EdgeDist& a, const EdgeDist& b) {
+    std::sort(lev_dists.begin(), lev_dists.end(),
+              [](const edge_dist& a, const edge_dist& b) {
                 return a.second < b.second;
               });
-    newNode = levDists.at(0).first.GetChildNode(); // after sorting the best
+    node = lev_dists.at(0).first.GetChildNode(); // after sorting the best
                                                    // edge is at first position
   } else {
     // go back to root node
-    newNode = _rootNode;
+    node = _root_node;
   }
 
-  _currentNode->MoveChatbotToNewNode(newNode);
+  _current_node->MoveChatbotToNewNode(node);
 }
 
-void ChatBot::SetCurrentNode(GraphNode* node) {
-  _currentNode = node;
+void chat_bot::current_node(GraphNode* node) {
+  _current_node = node;
 
   // select a random node answer (if several answers should exist)
-  const auto& answers = _currentNode->GetAnswers();
+  const auto& answers = _current_node->GetAnswers();
 
   std::mt19937 generator(int(std::time(0)));
   std::uniform_int_distribution<int> dis(0, answers.size() - 1);
   std::string answer = answers.at(dis(generator));
 
-  _chatLogic->SetChatbotHandle(this);
-  _chatLogic->SendMessageToUser(answer);
+  _chat_logic->SetChatbotHandle(this);
+  _chat_logic->SendMessageToUser(answer);
 }
 
-int ChatBot::ComputeLevenshteinDistance(std::string s1, std::string s2) {
+int chat_bot::levenshtein_distance(std::string s1, std::string s2) {
   std::transform(s1.begin(), s1.end(), s1.begin(), ::toupper);
   std::transform(s2.begin(), s2.end(), s2.begin(), ::toupper);
 

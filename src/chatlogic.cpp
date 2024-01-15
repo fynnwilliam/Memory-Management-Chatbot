@@ -76,14 +76,14 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
           int id = std::stoi(idToken->second);
 
           if (type->second == "NODE") {
-            auto newNode = std::find_if(
+            auto node = std::find_if(
                 _nodes.begin(), _nodes.end(),
                 [&id](const auto& node) { return node->GetID() == id; });
 
-            if (newNode == _nodes.end()) {
+            if (node == _nodes.end()) {
               _nodes.emplace_back(std::make_unique<GraphNode>(id));
-              newNode = _nodes.end() - 1;
-              AddAllTokensToElement("ANSWER", tokens, **newNode);
+              node = _nodes.end() - 1;
+              AddAllTokensToElement("ANSWER", tokens, **node);
             }
           }
 
@@ -136,35 +136,35 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
   }
 
   // identify root node
-  GraphNode* rootNode = nullptr;
+  GraphNode* root_node = nullptr;
   for (auto& node : _nodes) {
     if (node->GetNumberOfParents() == 0) {
-      if (rootNode == nullptr) {
-        rootNode = node.get();
+      if (root_node == nullptr) {
+        root_node = node.get();
       } else {
         std::cout << "ERROR : Multiple root nodes detected" << std::endl;
       }
     }
   }
 
-  auto chatBot = ChatBot{"../images/chatbot.png"};
+  auto chatBot = chat_bot{"../images/chatbot.png"};
 
   // add pointer to chatlogic so that chatbot answers can be passed on to the
   // GUI
-  chatBot.SetChatLogicHandle(this);
+  chatBot.chat_logic_handle(this);
 
-  chatBot.SetRootNode(rootNode);
-  rootNode->MoveChatbotHere(std::move(chatBot));
+  chatBot.root_node(root_node);
+  root_node->MoveChatbotHere(std::move(chatBot));
 }
 
 void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog* panelDialog) {
   _panelDialog = panelDialog;
 }
 
-void ChatLogic::SetChatbotHandle(ChatBot* chatbot) { _chatBot = chatbot; }
+void ChatLogic::SetChatbotHandle(chat_bot* chatbot) { _chatBot = chatbot; }
 
 void ChatLogic::SendMessageToChatbot(std::string message) {
-  _chatBot->ReceiveMessageFromUser(message);
+  _chatBot->receive_message_from_user(message);
 }
 
 void ChatLogic::SendMessageToUser(std::string message) {
@@ -172,5 +172,5 @@ void ChatLogic::SendMessageToUser(std::string message) {
 }
 
 wxBitmap* ChatLogic::GetImageFromChatbot() {
-  return _chatBot->GetImageHandle();
+  return _chatBot->image_handle();
 }

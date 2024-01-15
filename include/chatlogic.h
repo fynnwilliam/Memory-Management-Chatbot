@@ -6,7 +6,7 @@
 
 #include "chatgui.h"
 
-class ChatBot;
+class chat_bot;
 class GraphEdge;
 class GraphNode;
 
@@ -15,8 +15,8 @@ private:
   std::vector<std::unique_ptr<GraphNode>> _nodes;
   std::vector<GraphEdge*> _edges;
 
-  GraphNode* _currentNode = nullptr;
-  ChatBot* _chatBot = nullptr;
+  GraphNode* _current_node = nullptr;
+  chat_bot* _chatBot = nullptr;
   ChatBotPanelDialog* _panelDialog = nullptr;
 
   typedef std::vector<std::pair<std::string, std::string>> tokenlist;
@@ -30,7 +30,7 @@ public:
   ~ChatLogic();
 
   void SetPanelDialogHandle(ChatBotPanelDialog* panelDialog);
-  void SetChatbotHandle(ChatBot* chatbot);
+  void SetChatbotHandle(chat_bot* chatbot);
 
   void LoadAnswerGraphFromFile(std::string filename);
   void SendMessageToChatbot(std::string message);

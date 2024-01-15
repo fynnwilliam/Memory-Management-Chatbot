@@ -12,7 +12,7 @@ class ChatBotPanelDialog : public wxScrolledWindow {
 private:
   wxBoxSizer* _dialogSizer = new wxBoxSizer(wxVERTICAL);
   wxBitmap _image;
-  std::unique_ptr<ChatLogic> _chatLogic = std::make_unique<ChatLogic>();
+  std::unique_ptr<ChatLogic> _chat_logic = std::make_unique<ChatLogic>();
 
   void show_newest_element() noexcept;
   void show_scrollbar() noexcept;
@@ -21,7 +21,7 @@ public:
   ChatBotPanelDialog(wxWindow* parent, wxWindowID id);
   ~ChatBotPanelDialog();
 
-  ChatLogic& GetChatLogicHandle() { return *_chatLogic; }
+  ChatLogic& chat_logic_handle() { return *_chat_logic; }
 
   void paintEvent(wxPaintEvent& evt);
   void paintNow();

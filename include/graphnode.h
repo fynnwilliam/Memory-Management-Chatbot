@@ -15,7 +15,7 @@ private:
       _childEdges; // edges to subsequent nodes
 
   std::vector<GraphEdge*> _parentEdges; // edges to preceding nodes
-  ChatBot _chatBot;
+  chat_bot _chatBot;
 
   int _id;
   std::vector<std::string> _answers;
@@ -35,8 +35,8 @@ public:
   void AddToken(std::string token); // add answers to list
   void AddEdgeToParentNode(GraphEdge* edge);
   void AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge);
-  void MoveChatbotHere(ChatBot chatbot);
-  void MoveChatbotToNewNode(GraphNode* newNode);
+  void MoveChatbotHere(chat_bot chatbot);
+  void MoveChatbotToNewNode(GraphNode* node);
 };
 
 #endif // GRAPHNODE_H_

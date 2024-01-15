@@ -18,7 +18,7 @@ std::string dataPath = "../";
 std::string imgBasePath = dataPath + "images/";
 
 const auto& image_from_chat_bot(ChatBotPanelDialog* panel_dialog) noexcept {
-  return *panel_dialog->GetChatLogicHandle().GetImageFromChatbot();
+  return *panel_dialog->chat_logic_handle().GetImageFromChatbot();
 }
 } // namespace
 
@@ -60,7 +60,7 @@ void ChatBotFrame::OnEnter(wxCommandEvent& WXUNUSED(event)) {
 
   _panelDialog->AddDialogItem(userText, true);
   _userTextCtrl->Clear();
-  _panelDialog->GetChatLogicHandle().SendMessageToChatbot(
+  _panelDialog->chat_logic_handle().SendMessageToChatbot(
       std::string(userText.mb_str()));
 }
 
@@ -108,8 +108,8 @@ ChatBotPanelDialog::ChatBotPanelDialog(wxWindow* parent, wxWindowID id)
   wxInitAllImageHandlers();
 
   // pass pointer to chatbot dialog so answers can be displayed in GUI
-  _chatLogic->SetPanelDialogHandle(this);
-  _chatLogic->LoadAnswerGraphFromFile(dataPath + "src/answergraph.txt");
+  _chat_logic->SetPanelDialogHandle(this);
+  _chat_logic->LoadAnswerGraphFromFile(dataPath + "src/answergraph.txt");
 }
 
 ChatBotPanelDialog::~ChatBotPanelDialog() = default;

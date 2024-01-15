@@ -7,33 +7,32 @@
 class GraphNode;
 class ChatLogic;
 
-class ChatBot {
+class chat_bot {
 private:
   wxBitmap* _image = nullptr;
+  GraphNode* _current_node = nullptr;
+  GraphNode* _root_node = nullptr;
+  ChatLogic* _chat_logic = nullptr;
 
-  GraphNode* _currentNode = nullptr;
-  GraphNode* _rootNode = nullptr;
-  ChatLogic* _chatLogic = nullptr;
-
-  int ComputeLevenshteinDistance(std::string s1, std::string s2);
+  int levenshtein_distance(std::string s1, std::string s2);
 
 public:
-  ChatBot();
-  ChatBot(std::string filename);
-  ~ChatBot();
+  chat_bot();
+  chat_bot(std::string filename);
+  ~chat_bot();
 
-  ChatBot(const ChatBot& other);
-  ChatBot(ChatBot&& other) noexcept;
-  ChatBot& operator=(const ChatBot& rhs);
-  ChatBot& operator=(ChatBot&& rhs);
+  chat_bot(const chat_bot& other);
+  chat_bot(chat_bot&& other) noexcept;
+  chat_bot& operator=(const chat_bot& rhs);
+  chat_bot& operator=(chat_bot&& rhs);
 
-  void SetCurrentNode(GraphNode* node);
-  void SetRootNode(GraphNode* rootNode) { _rootNode = rootNode; }
-  void SetChatLogicHandle(ChatLogic* chatLogic) { _chatLogic = chatLogic; }
-  ChatLogic* GetChatLogicHandle() { return _chatLogic; }
-  wxBitmap* GetImageHandle() { return _image; }
+  void current_node(GraphNode* node);
+  void root_node(GraphNode* root_node) { _root_node = root_node; }
+  void chat_logic_handle(ChatLogic* chat_logic) { _chat_logic = chat_logic; }
+  ChatLogic* chat_logic_handle() { return _chat_logic; }
+  wxBitmap* image_handle() { return _image; }
 
-  void ReceiveMessageFromUser(std::string message);
+  void receive_message_from_user(std::string message);
 };
 
 #endif // CHATBOT_H_
