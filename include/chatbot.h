@@ -4,15 +4,15 @@
 #include <wx/bitmap.h>
 
 #include <string>
-class GraphNode;
-class ChatLogic;
+class graph_node;
+class chat_logic;
 
 class chat_bot {
 private:
   wxBitmap* _image = nullptr;
-  GraphNode* _current_node = nullptr;
-  GraphNode* _root_node = nullptr;
-  ChatLogic* _chat_logic = nullptr;
+  graph_node* _current_node = nullptr;
+  graph_node* _root_node = nullptr;
+  chat_logic* _chat_logic = nullptr;
 
   int levenshtein_distance(std::string s1, std::string s2);
 
@@ -26,13 +26,12 @@ public:
   chat_bot& operator=(const chat_bot& rhs);
   chat_bot& operator=(chat_bot&& rhs);
 
-  void current_node(GraphNode* node);
-  void root_node(GraphNode* root_node) { _root_node = root_node; }
-  void chat_logic_handle(ChatLogic* chat_logic) { _chat_logic = chat_logic; }
-  ChatLogic* chat_logic_handle() { return _chat_logic; }
+  void current_node(graph_node* node);
+  void root_node(graph_node* root_node) { _root_node = root_node; }
+  void chat_logic_handle(chat_logic* chat_logic) { _chat_logic = chat_logic; }
+  chat_logic* chat_logic_handle() { return _chat_logic; }
   wxBitmap* image_handle() { return _image; }
-
-  void receive_message_from_user(std::string message);
+  void receive_from_user(std::string message);
 };
 
 #endif // CHATBOT_H_

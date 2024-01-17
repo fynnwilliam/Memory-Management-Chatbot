@@ -2,14 +2,12 @@
 
 #include "graphnode.h"
 
-GraphEdge::GraphEdge(int id) { _id = id; }
+graph_edge::graph_edge(int id) { _id = id; }
 
-void GraphEdge::SetChildNode(GraphNode* childNode) { _childNode = childNode; }
+void graph_edge::child(graph_node* node) { _child = node; }
 
-void GraphEdge::SetParentNode(GraphNode* parentNode) {
-  _parentNode = parentNode;
-}
+void graph_edge::parent(graph_node* node) { _parent = node; }
 
-void GraphEdge::AddToken(std::string token) {
+void graph_edge::add_token(std::string token) {
   _keywords.emplace_back(std::move(token));
 }

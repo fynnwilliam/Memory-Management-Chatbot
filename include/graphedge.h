@@ -1,32 +1,29 @@
-#ifndef GRAPHEDGE_H_
-#define GRAPHEDGE_H_
+#ifndef GRAPHEDGE_H
+#define GRAPHEDGE_H
 
 #include <string>
 #include <vector>
 
-class GraphNode;
+class graph_node;
 
-class GraphEdge {
+class graph_edge {
 private:
-  GraphNode* _childNode = nullptr;
-  GraphNode* _parentNode = nullptr;
-
   int _id;
-  std::vector<std::string>
-      _keywords; // list of topics associated with this edge
+  graph_node* _child = nullptr;
+  graph_node* _parent = nullptr;
+
+  // list of topics associated with this edge
+  std::vector<std::string> _keywords;
 
 public:
-  GraphEdge(int id);
+  graph_edge(int id);
 
-  int GetID() { return _id; }
-  void SetChildNode(GraphNode* childNode);
-  void SetParentNode(GraphNode* parentNode);
-  GraphNode* GetChildNode() const { return _childNode; }
-  const std::vector<std::string>& GetKeywords() const noexcept {
-    return _keywords;
-  }
-
-  void AddToken(std::string token);
+  int id() { return _id; }
+  void child(graph_node* node);
+  void parent(graph_node* node);
+  graph_node* child() const { return _child; }
+  const auto& keywords() const noexcept { return _keywords; }
+  void add_token(std::string token);
 };
 
-#endif // GRAPHEDGE_H_
+#endif // GRAPHEDGE_H

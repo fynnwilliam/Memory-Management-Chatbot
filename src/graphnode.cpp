@@ -4,31 +4,31 @@
 
 #include "graphedge.h"
 
-GraphNode::GraphNode(int id) : _id{id} {}
+graph_node::graph_node(int id) : _id{id} {}
 
-GraphNode::~GraphNode() = default;
+graph_node::~graph_node() = default;
 
-void GraphNode::AddToken(std::string token) {
+void graph_node::add_token(std::string token) {
   _answers.emplace_back(std::move(token));
 }
 
-void GraphNode::AddEdgeToParentNode(GraphEdge* edge) {
-  _parentEdges.emplace_back(edge);
+void graph_node::add_to_parent(graph_edge* edge) {
+  _parent_edges.emplace_back(edge);
 }
 
-void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge) {
-  _childEdges.emplace_back(std::move(edge));
+void graph_node::add_to_child(std::unique_ptr<graph_edge> edge) {
+  _child_edges.emplace_back(std::move(edge));
 }
 
-void GraphNode::MoveChatbotHere(chat_bot chatbot) {
-  _chatBot = std::move(chatbot);
-  _chatBot.current_node(this);
+void graph_node::move_chat_bot_here(chat_bot bot) {
+  _chat_bot = std::move(bot);
+  _chat_bot.current_node(this);
 }
 
-void GraphNode::MoveChatbotToNewNode(GraphNode* node) {
-  node->MoveChatbotHere(std::move(_chatBot));
+void graph_node::move_chat_bot_here(graph_node* node) {
+  node->move_chat_bot_here(std::move(_chat_bot));
 }
 
-GraphEdge& GraphNode::GetChildEdgeAtIndex(int index) {
-  return *_childEdges[index];
+graph_edge& graph_node::child_edge_at(int index) {
+  return *_child_edges[index];
 }

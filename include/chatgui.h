@@ -5,14 +5,14 @@
 
 #include <memory>
 
-class ChatLogic;
+class chat_logic;
 
 // middle part of the window containing the dialog between user and chatbot
 class ChatBotPanelDialog : public wxScrolledWindow {
 private:
   wxBoxSizer* _dialogSizer = new wxBoxSizer(wxVERTICAL);
   wxBitmap _image;
-  std::unique_ptr<ChatLogic> _chat_logic = std::make_unique<ChatLogic>();
+  std::unique_ptr<chat_logic> _chat_logic = std::make_unique<chat_logic>();
 
   void show_newest_element() noexcept;
   void show_scrollbar() noexcept;
@@ -21,7 +21,7 @@ public:
   ChatBotPanelDialog(wxWindow* parent, wxWindowID id);
   ~ChatBotPanelDialog();
 
-  ChatLogic& chat_logic_handle() { return *_chat_logic; }
+  chat_logic& chat_logic_handle() { return *_chat_logic; }
 
   void paintEvent(wxPaintEvent& evt);
   void paintNow();
@@ -44,7 +44,7 @@ public:
 
 class ChatBotFrame : public wxFrame {
 private:
-  ChatBotPanelDialog* _panelDialog;
+  ChatBotPanelDialog* _panel_dialog;
   wxTextCtrl* _userTextCtrl;
 
   void OnEnter(wxCommandEvent& WXUNUSED(event));

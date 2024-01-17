@@ -12,21 +12,21 @@
 #include "graphedge.h"
 #include "graphnode.h"
 
-ChatLogic::ChatLogic() = default;
+chat_logic::chat_logic() = default;
 
-ChatLogic::~ChatLogic() = default;
+chat_logic::~chat_logic() = default;
 
 template <typename T>
-void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist& tokens,
-                                      T& element) {
+void chat_logic::add_tokens(std::string token_id, tokenlist& tokens,
+                            T& element) {
   auto token = tokens.begin();
   while (true) {
-    token = std::find_if(token, tokens.end(), [&tokenID](const auto& pair) {
-      return pair.first == tokenID;
+    token = std::find_if(token, tokens.end(), [&token_id](const auto& pair) {
+      return pair.first == token_id;
       ;
     });
     if (token != tokens.end()) {
-      element.AddToken(token->second);
+      element.add_token(token->second);
       token++;
     } else {
       break;
@@ -34,31 +34,30 @@ void ChatLogic::AddAllTokensToElement(std::string tokenID, tokenlist& tokens,
   }
 }
 
-void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
+void chat_logic::load_answer_graph(std::string filename) {
   std::ifstream file(filename);
 
   if (file) {
-    std::string lineStr;
-    while (getline(file, lineStr)) {
+    std::string line;
+    while (getline(file, line)) {
       tokenlist tokens;
-      while (lineStr.size() > 0) {
-        int posTokenFront = lineStr.find("<");
-        int posTokenBack = lineStr.find(">");
-        if (posTokenFront < 0 || posTokenBack < 0)
+      while (line.size() > 0) {
+        int first = line.find('<');
+        int last = line.find('>');
+        if (first < 0 || last < 0)
           break;
-        std::string tokenStr =
-            lineStr.substr(posTokenFront + 1, posTokenBack - 1);
+        auto token_str = line.substr(first + 1, last - 1);
 
-        int posTokenInfo = tokenStr.find(":");
-        if (posTokenInfo != std::string::npos) {
-          std::string tokenType = tokenStr.substr(0, posTokenInfo);
-          std::string tokenInfo =
-              tokenStr.substr(posTokenInfo + 1, tokenStr.size() - 1);
+        int pos_token_info = token_str.find(':');
+        if (pos_token_info != std::string::npos) {
+          auto token_type = token_str.substr(0, pos_token_info);
+          auto token_info =
+              token_str.substr(pos_token_info + 1, token_str.size() - 1);
 
-          tokens.emplace_back(std::move(tokenType), std::move(tokenInfo));
+          tokens.emplace_back(std::move(token_type), std::move(token_info));
         }
 
-        lineStr = lineStr.substr(posTokenBack + 1, lineStr.size());
+        line = line.substr(last + 1, line.size());
       }
 
       auto type =
@@ -67,58 +66,58 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
                          return pair.first == "TYPE";
                        });
       if (type != tokens.end()) {
-        auto idToken =
+        auto id_token =
             std::find_if(tokens.begin(), tokens.end(),
                          [](const std::pair<std::string, std::string>& pair) {
                            return pair.first == "ID";
                          });
-        if (idToken != tokens.end()) {
-          int id = std::stoi(idToken->second);
+        if (id_token != tokens.end()) {
+          int id = std::stoi(id_token->second);
 
           if (type->second == "NODE") {
             auto node = std::find_if(
                 _nodes.begin(), _nodes.end(),
-                [&id](const auto& node) { return node->GetID() == id; });
+                [&id](const auto& node) { return node->id() == id; });
 
             if (node == _nodes.end()) {
-              _nodes.emplace_back(std::make_unique<GraphNode>(id));
+              _nodes.emplace_back(std::make_unique<graph_node>(id));
               node = _nodes.end() - 1;
-              AddAllTokensToElement("ANSWER", tokens, **node);
+              add_tokens("ANSWER", tokens, **node);
             }
           }
 
           if (type->second == "EDGE") {
-            auto parentToken = std::find_if(
+            auto parent_token = std::find_if(
                 tokens.begin(), tokens.end(),
                 [](const std::pair<std::string, std::string>& pair) {
                   return pair.first == "PARENT";
                 });
-            auto childToken = std::find_if(
+            auto child_token = std::find_if(
                 tokens.begin(), tokens.end(),
                 [](const std::pair<std::string, std::string>& pair) {
                   return pair.first == "CHILD";
                 });
 
-            if (parentToken != tokens.end() && childToken != tokens.end()) {
-              const auto& parentNode = *std::find_if(
+            if (parent_token != tokens.end() && child_token != tokens.end()) {
+              const auto& parent = *std::find_if(
                   _nodes.begin(), _nodes.end(),
-                  [&parentToken](const auto& node) {
-                    return node->GetID() == std::stoi(parentToken->second);
+                  [&parent_token](const auto& node) {
+                    return node->id() == std::stoi(parent_token->second);
                   });
-              const auto& childNode = *std::find_if(
+              const auto& child = *std::find_if(
                   _nodes.begin(), _nodes.end(),
-                  [&childToken](const auto& node) {
-                    return node->GetID() == std::stoi(childToken->second);
+                  [&child_token](const auto& node) {
+                    return node->id() == std::stoi(child_token->second);
                   });
 
-              auto edge = std::make_unique<GraphEdge>(id);
-              edge->SetChildNode(childNode.get());
-              edge->SetParentNode(parentNode.get());
+              auto edge = std::make_unique<graph_edge>(id);
+              edge->child(child.get());
+              edge->parent(parent.get());
               _edges.emplace_back(edge.get());
 
-              AddAllTokensToElement("KEYWORD", tokens, *edge);
-              childNode->AddEdgeToParentNode(edge.get());
-              parentNode->AddEdgeToChildNode(std::move(edge));
+              add_tokens("KEYWORD", tokens, *edge);
+              child->add_to_parent(edge.get());
+              parent->add_to_child(std::move(edge));
             }
           }
         } else {
@@ -136,9 +135,9 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
   }
 
   // identify root node
-  GraphNode* root_node = nullptr;
+  graph_node* root_node = nullptr;
   for (auto& node : _nodes) {
-    if (node->GetNumberOfParents() == 0) {
+    if (node->parent_count() == 0) {
       if (root_node == nullptr) {
         root_node = node.get();
       } else {
@@ -147,30 +146,28 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename) {
     }
   }
 
-  auto chatBot = chat_bot{"../images/chatbot.png"};
+  auto bot = chat_bot{"../images/chatbot.png"};
 
   // add pointer to chatlogic so that chatbot answers can be passed on to the
   // GUI
-  chatBot.chat_logic_handle(this);
+  bot.chat_logic_handle(this);
 
-  chatBot.root_node(root_node);
-  root_node->MoveChatbotHere(std::move(chatBot));
+  bot.root_node(root_node);
+  root_node->move_chat_bot_here(std::move(bot));
 }
 
-void ChatLogic::SetPanelDialogHandle(ChatBotPanelDialog* panelDialog) {
-  _panelDialog = panelDialog;
+void chat_logic::panel_dialog_handle(ChatBotPanelDialog* dialog) {
+  _panel_dialog = dialog;
 }
 
-void ChatLogic::SetChatbotHandle(chat_bot* chatbot) { _chatBot = chatbot; }
+void chat_logic::chat_bot_handle(chat_bot* bot) { _chat_bot = bot; }
 
-void ChatLogic::SendMessageToChatbot(std::string message) {
-  _chatBot->receive_message_from_user(message);
+void chat_logic::send_to_chat_bot(std::string message) {
+  _chat_bot->receive_from_user(std::move(message));
 }
 
-void ChatLogic::SendMessageToUser(std::string message) {
-  _panelDialog->PrintChatbotResponse(message);
+void chat_logic::send_to_user(std::string message) {
+  _panel_dialog->PrintChatbotResponse(std::move(message));
 }
 
-wxBitmap* ChatLogic::GetImageFromChatbot() {
-  return _chatBot->image_handle();
-}
+wxBitmap* chat_logic::chat_bot_image() { return _chat_bot->image_handle(); }

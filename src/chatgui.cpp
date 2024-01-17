@@ -18,7 +18,7 @@ std::string dataPath = "../";
 std::string imgBasePath = dataPath + "images/";
 
 const auto& image_from_chat_bot(ChatBotPanelDialog* panel_dialog) noexcept {
-  return *panel_dialog->chat_logic_handle().GetImageFromChatbot();
+  return *panel_dialog->chat_logic_handle().chat_bot_image();
 }
 } // namespace
 
@@ -35,7 +35,7 @@ ChatBotFrame::ChatBotFrame(const wxString& title)
     : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height)) {
   ChatBotFrameImagePanel* ctrlPanel = new ChatBotFrameImagePanel(this);
 
-  _panelDialog = new ChatBotPanelDialog(ctrlPanel, wxID_ANY);
+  _panel_dialog = new ChatBotPanelDialog(ctrlPanel, wxID_ANY);
 
   // create text control for user input
   int idTextXtrl = 1;
@@ -48,7 +48,7 @@ ChatBotFrame::ChatBotFrame(const wxString& title)
   // create vertical sizer for panel alignment and add panels
   wxBoxSizer* vertBoxSizer = new wxBoxSizer(wxVERTICAL);
   vertBoxSizer->AddSpacer(90);
-  vertBoxSizer->Add(_panelDialog, 6, wxEXPAND | wxALL, 0);
+  vertBoxSizer->Add(_panel_dialog, 6, wxEXPAND | wxALL, 0);
   vertBoxSizer->Add(_userTextCtrl, 1, wxEXPAND | wxALL, 5);
   ctrlPanel->SetSizer(vertBoxSizer);
 
@@ -58,9 +58,9 @@ ChatBotFrame::ChatBotFrame(const wxString& title)
 void ChatBotFrame::OnEnter(wxCommandEvent& WXUNUSED(event)) {
   wxString userText = _userTextCtrl->GetLineText(0);
 
-  _panelDialog->AddDialogItem(userText, true);
+  _panel_dialog->AddDialogItem(userText, true);
   _userTextCtrl->Clear();
-  _panelDialog->chat_logic_handle().SendMessageToChatbot(
+  _panel_dialog->chat_logic_handle().send_to_chat_bot(
       std::string(userText.mb_str()));
 }
 
@@ -108,8 +108,8 @@ ChatBotPanelDialog::ChatBotPanelDialog(wxWindow* parent, wxWindowID id)
   wxInitAllImageHandlers();
 
   // pass pointer to chatbot dialog so answers can be displayed in GUI
-  _chat_logic->SetPanelDialogHandle(this);
-  _chat_logic->LoadAnswerGraphFromFile(dataPath + "src/answergraph.txt");
+  _chat_logic->panel_dialog_handle(this);
+  _chat_logic->load_answer_graph(dataPath + "src/answergraph.txt");
 }
 
 ChatBotPanelDialog::~ChatBotPanelDialog() = default;

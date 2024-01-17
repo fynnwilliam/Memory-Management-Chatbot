@@ -1,5 +1,5 @@
-#ifndef CHATLOGIC_H_
-#define CHATLOGIC_H_
+#ifndef CHATLOGIC_H
+#define CHATLOGIC_H
 
 #include <string>
 #include <vector>
@@ -7,35 +7,32 @@
 #include "chatgui.h"
 
 class chat_bot;
-class GraphEdge;
-class GraphNode;
+class graph_edge;
+class graph_node;
 
-class ChatLogic {
+class chat_logic {
 private:
-  std::vector<std::unique_ptr<GraphNode>> _nodes;
-  std::vector<GraphEdge*> _edges;
+  std::vector<std::unique_ptr<graph_node>> _nodes;
+  std::vector<graph_edge*> _edges;
+  graph_node* _current_node = nullptr;
+  chat_bot* _chat_bot = nullptr;
+  ChatBotPanelDialog* _panel_dialog = nullptr;
 
-  GraphNode* _current_node = nullptr;
-  chat_bot* _chatBot = nullptr;
-  ChatBotPanelDialog* _panelDialog = nullptr;
-
-  typedef std::vector<std::pair<std::string, std::string>> tokenlist;
+  using tokenlist = std::vector<std::pair<std::string, std::string>>;
 
   template <typename T>
-  void AddAllTokensToElement(std::string tokenID, tokenlist& tokens,
-                             T& element);
+  void add_tokens(std::string token_id, tokenlist& tokens, T& element);
 
 public:
-  ChatLogic();
-  ~ChatLogic();
+  chat_logic();
+  ~chat_logic();
 
-  void SetPanelDialogHandle(ChatBotPanelDialog* panelDialog);
-  void SetChatbotHandle(chat_bot* chatbot);
-
-  void LoadAnswerGraphFromFile(std::string filename);
-  void SendMessageToChatbot(std::string message);
-  void SendMessageToUser(std::string message);
-  wxBitmap* GetImageFromChatbot();
+  void panel_dialog_handle(ChatBotPanelDialog* dialog);
+  void chat_bot_handle(chat_bot* bot);
+  void load_answer_graph(std::string filename);
+  void send_to_chat_bot(std::string message);
+  void send_to_user(std::string message);
+  wxBitmap* chat_bot_image();
 };
 
-#endif // CHATLOGIC_H_
+#endif // CHATLOGIC_H
