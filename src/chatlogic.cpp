@@ -156,7 +156,7 @@ void chat_logic::load_answer_graph(std::string filename) {
   root_node->move_chat_bot_here(std::move(bot));
 }
 
-void chat_logic::panel_dialog_handle(ChatBotPanelDialog* dialog) {
+void chat_logic::panel_dialog_handle(panel_dialog* dialog) {
   _panel_dialog = dialog;
 }
 
@@ -167,7 +167,7 @@ void chat_logic::send_to_chat_bot(std::string message) {
 }
 
 void chat_logic::send_to_user(std::string message) {
-  _panel_dialog->PrintChatbotResponse(std::move(message));
+  _panel_dialog->print_response(std::move(message));
 }
 
 wxBitmap* chat_logic::chat_bot_image() { return _chat_bot->image_handle(); }

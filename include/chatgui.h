@@ -8,9 +8,9 @@
 class chat_logic;
 
 // middle part of the window containing the dialog between user and chatbot
-class ChatBotPanelDialog : public wxScrolledWindow {
+class panel_dialog : public wxScrolledWindow {
 private:
-  wxBoxSizer* _dialogSizer = new wxBoxSizer(wxVERTICAL);
+  wxBoxSizer* _dialog_sizer = new wxBoxSizer(wxVERTICAL);
   wxBitmap _image;
   std::unique_ptr<chat_logic> _chat_logic = std::make_unique<chat_logic>();
 
@@ -18,59 +18,59 @@ private:
   void show_scrollbar() noexcept;
 
 public:
-  ChatBotPanelDialog(wxWindow* parent, wxWindowID id);
-  ~ChatBotPanelDialog();
+  panel_dialog(wxWindow* parent, wxWindowID id);
+  ~panel_dialog();
 
   chat_logic& chat_logic_handle() { return *_chat_logic; }
 
-  void paintEvent(wxPaintEvent& evt);
-  void paintNow();
+  void paint_event(wxPaintEvent& evt);
+  void paint_now();
   void render(wxDC& dc);
 
-  void AddDialogItem(wxString text, bool isFromUser = true);
-  void PrintChatbotResponse(std::string response);
+  void add_dialog_item(wxString text, bool is_from_user = true);
+  void print_response(std::string response);
 
   DECLARE_EVENT_TABLE()
 };
 
-class ChatBotPanelDialogItem : public wxPanel {
+class panel_dialog_item : public wxPanel {
 private:
-  wxStaticBitmap* _chatBotImg;
-  wxStaticText* _chatBotTxt;
+  wxStaticBitmap* _chat_bot_img;
+  wxStaticText* _chat_bot_tex;
 
 public:
-  ChatBotPanelDialogItem(wxPanel* parent, wxString text, bool isFromUser);
+  panel_dialog_item(wxPanel* parent, wxString text, bool is_from_user);
 };
 
-class ChatBotFrame : public wxFrame {
+class frame : public wxFrame {
 private:
-  ChatBotPanelDialog* _panel_dialog;
-  wxTextCtrl* _userTextCtrl;
+  panel_dialog* _panel_dialog;
+  wxTextCtrl* _user_text_ctrl;
 
   void OnEnter(wxCommandEvent& WXUNUSED(event));
 
 public:
-  ChatBotFrame(const wxString& title);
+  frame(const wxString& title);
 };
 
 // control panel for background image display
-class ChatBotFrameImagePanel : public wxPanel {
+class frame_image_panel : public wxPanel {
   wxBitmap _image;
 
 public:
-  ChatBotFrameImagePanel(wxFrame* parent);
+  frame_image_panel(wxFrame* parent);
 
-  void paintEvent(wxPaintEvent& evt);
-  void paintNow();
+  void paint_event(wxPaintEvent& evt);
+  void paint_now();
   void render(wxDC& dc);
 
   DECLARE_EVENT_TABLE()
 };
 
 // wxWidgets app that hides main()
-class ChatBotApp : public wxApp {
+class chat_bot_app : public wxApp {
 public:
-  virtual bool OnInit();
+  virtual bool OnInit() override;
 };
 
 #endif // CHATGUI_H_
